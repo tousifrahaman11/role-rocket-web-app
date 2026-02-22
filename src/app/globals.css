@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: #020617;
+  --color-foreground: #e2e8f0;
+  --color-accent: #38bdf8;
+  --color-accent-soft: #0f172a;
+  --color-rocket: #ff6b35;
+  --font-sans: var(--font-sans);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+.glass-panel {
+  @apply rounded-3xl border border-white/10 bg-slate-900/70 shadow-xl shadow-slate-950/60 backdrop-blur-2xl;
+}
+
+.card-soft {
+  @apply rounded-2xl border border-slate-800/80 bg-gradient-to-b from-slate-900/80 via-slate-950/80 to-slate-950 shadow-lg shadow-black/40;
+}
+
+.tag-pill {
+  @apply inline-flex items-center rounded-full border border-white/10 bg-slate-900/80 px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-slate-300;
+}
+
+.badge-soft {
+  @apply inline-flex items-center rounded-full bg-slate-800/80 px-2.5 py-1 text-[11px] font-medium text-slate-200;
+}
+
+.gradient-border {
+  position: relative;
+}
+
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(248, 250, 252, 0.2),
+    rgba(56, 189, 248, 0.8),
+    rgba(255, 107, 53, 0.9)
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.rocket-orbit {
+  position: relative;
+}
+
+.rocket-orbit::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(248, 250, 252, 0.4),
+    transparent 60%
+  );
+  opacity: 0.7;
+  filter: blur(10px);
+}
+
+.scroll-section {
+  @apply scroll-mt-24;
+}
+
+.text-gradient {
+  background: linear-gradient(
+    135deg,
+    #f97316,
+    #fb923c,
+    #38bdf8,
+    #a855f7
+  );
+  -webkit-background-clip: text;
+  color: transparent;
+}

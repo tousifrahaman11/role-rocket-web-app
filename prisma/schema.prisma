@@ -1,0 +1,132 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  CANDIDATE
+  EMPLOYER
+  ADMIN
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  passwordHash String
+  name         String?
+  role         Role          @default(CANDIDATE)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  company      Company?      @relation(fields: [companyId], references: [id])
+  companyId    String?
+
+  resumes      Resume[]
+  applications Application[]
+  savedJobs    SavedJob[]
+  alerts       JobAlertSubscription[]
+}
+
+model Company {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  logoUrl     String?
+  website     String?
+  location    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users       User[]
+  jobs        Job[]
+
+  @@index([name])
+}
+
+model Job {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  location    String
+  salaryMin   Int?
+  salaryMax   Int?
+  jobType     String
+  skills      String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  company     Company  @relation(fields: [companyId], references: [id])
+  companyId   String
+
+  applications Application[]
+  savedBy      SavedJob[]
+  analytics    JobAnalytics?
+
+  @@index([title])
+  @@index([location])
+}
+
+model Resume {
+  id          String   @id @default(cuid())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  url         String
+  text        String
+  skills      String[]
+  rocketScore Float
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Application {
+  id          String   @id @default(cuid())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  job         Job      @relation(fields: [jobId], references: [id])
+  jobId       String
+  status      String   @default("PENDING")
+  rocketScore Float?
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, jobId])
+  @@index([jobId])
+}
+
+model SavedJob {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  job       Job      @relation(fields: [jobId], references: [id])
+  jobId     String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, jobId])
+}
+
+model JobAlertSubscription {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  keywords  String?
+  location  String?
+  minSalary Int?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model JobAnalytics {
+  id             String   @id @default(cuid())
+  job            Job      @relation(fields: [jobId], references: [id])
+  jobId          String   @unique
+  views          Int      @default(0)
+  applications   Int      @default(0)
+  avgRocketScore Float?
+}
+
